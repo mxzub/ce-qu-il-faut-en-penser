@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mes sujets de conv'</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F7F5F0;
+      --surface: #FFFFFF;
+      --text: #1A1916;
+      --muted: #7A7670;
+      --accent: #C4673A;
+      --accent-light: #F5EBE4;
+      --border: rgba(26, 25, 22, 0.1);
+      --border-strong: rgba(26, 25, 22, 0.2);
+      --tag-bg: #EDEAE3;
+      --tag-text: #5A5750;
+      --radius: 12px;
+      --font-display: 'Lora', Georgia, serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ── */
+    .site-header {
+      padding: 2.5rem 1.25rem 1.5rem;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .site-header h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 5vw, 2.25rem);
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .site-header p {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    /* ── Tag filter ── */
+    .tag-bar {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 1.25rem 1.25rem;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag-btn {
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      font-weight: 400;
+      padding: 5px 13px;
+      border-radius: 20px;
+      border: 1px solid var(--border-strong);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tag-btn:hover { background: var(--tag-bg); color: var(--text); }
+    .tag-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+    /* ── Subject list ── */
+    .subject-list {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 1.25rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .subject-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.25rem;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.1s;
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .subject-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .subject-card:active { transform: scale(0.99); }
+
+    .card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .card-arrow {
+      color: var(--muted);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: transform 0.15s;
+    }
+
+    .subject-card:hover .card-arrow { transform: translateX(2px); }
+
+    .card-short {
+      margin-top: 4px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .tag-pill {
+      font-size: 0.72rem;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-weight: 400;
+    }
+
+    /* ── Detail view ── */
+    .detail-view {
+      display: none;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 1.25rem 3rem;
+      animation: fadeUp 0.25s ease both;
+    }
+
+    .detail-view.active { display: block; }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--muted);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem 0;
+      margin-bottom: 1.25rem;
+      transition: color 0.15s;
+    }
+
+    .back-btn:hover { color: var(--text); }
+
+    .detail-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 4vw, 1.8rem);
+      font-weight: 600;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    .detail-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-top: 0.75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .section {
+      margin-bottom: 1.75rem;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+
+    .section-body {
+      font-size: 0.92rem;
+      color: var(--text);
+      line-height: 1.75;
+    }
+
+    .opinion-block {
+      background: var(--accent-light);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 0.9rem 1.1rem;
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 0.92rem;
+      line-height: 1.75;
+      color: var(--text);
+    }
+
+    .ref-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ref-list a {
+      font-size: 0.875rem;
+      color: var(--accent);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity 0.15s;
+    }
+
+    .ref-list a:hover { opacity: 0.7; }
+
+    .ref-list a::before {
+      content: '↗';
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .related-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .related-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      color: var(--text);
+      transition: border-color 0.15s, transform 0.1s;
+    }
+
+    .related-item:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+    .related-item span:last-child { color: var(--muted); }
+
+    /* ── Empty state ── */
+    .empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* ── Loading ── */
+    .loading {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .subject-card:nth-child(1) { animation-delay: 0.03s; }
+    .subject-card:nth-child(2) { animation-delay: 0.07s; }
+    .subject-card:nth-child(3) { animation-delay: 0.11s; }
+    .subject-card:nth-child(4) { animation-delay: 0.15s; }
+    .subject-card:nth-child(5) { animation-delay: 0.19s; }
+    .subject-card:nth-child(6) { animation-delay: 0.23s; }
+
+    /* ── Divider ── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.75rem 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- List view -->
+  <div id="listView">
+    <header class="site-header">
+      <h1>Mes sujets de conv'</h1>
+      <p>Les idées et histoires que j'aime partager</p>
+    </header>
+
+    <div class="tag-bar" id="tagBar"></div>
+
+    <main class="subject-list" id="subjectList">
+      <div class="loading">Chargement…</div>
+    </main>
+  </div>
+
+  <!-- Detail view -->
+  <div class="detail-view" id="detailView">
+    <div style="padding-top: 1.5rem;">
+      <button class="back-btn" onclick="showList()">← Tous les sujets</button>
+    </div>
+    <div id="detailContent"></div>
+  </div>
+
+  <script>
+    let allSubjects = [];
+    let activeTag = 'tous';
+
+    // ── Load data ──
+    async function loadSubjects() {
+      try {
+        const res = await fetch('subjects.json');
+        allSubjects = await res.json();
+        buildTagBar();
+        renderList();
+      } catch (e) {
+        document.getElementById('subjectList').innerHTML =
+          '<div class="empty">Impossible de charger subjects.json.<br>Vérifiez que le fichier est bien dans le même dossier.</div>';
+      }
+    }
+
+    // ── Build tag filter ──
+    function buildTagBar() {
+      const tags = ['tous', ...new Set(allSubjects.flatMap(s => s.tags))];
+      const bar = document.getElementById('tagBar');
+      bar.innerHTML = tags.map(t =>
+        `<button class="tag-btn ${t === 'tous' ? 'active' : ''}" onclick="filterTag(this, '${t}')">${t}</button>`
+      ).join('');
+    }
+
+    function filterTag(btn, tag) {
+      document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTag = tag;
+      renderList();
+    }
+
+    // ── Render list ──
+    function renderList() {
+      const filtered = activeTag === 'tous'
+        ? allSubjects
+        : allSubjects.filter(s => s.tags.includes(activeTag));
+
+      const list = document.getElementById('subjectList');
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="empty">Aucun sujet pour ce filtre.</div>';
+        return;
+      }
+
+      list.innerHTML = filtered.map(s => `
+        <article class="subject-card" onclick="showDetail(${s.id})">
+          <div class="card-row">
+            <h2 class="card-title">${s.title}</h2>
+            <span class="card-arrow">›</span>
+          </div>
+          <p class="card-short">${s.short}</p>
+          <div class="card-tags">
+            ${s.tags.map(t => `<span class="tag-pill">${t}</span>`).join('')}
+          </div>
+        </article>
+      `).join('');
+    }
+
+    // ── Show detail ──
+    function showDetail(id) {
+      const s = allSubjects.find(x => x.id === id);
+      if (!s) return;
+
+      const related = allSubjects.filter(x => (s.related || []).includes(x.id));
+
+      document.getElementById('detailContent').innerHTML = `
+        <h1 class="detail-title">${s.title}</h1>
+        <div class="detail-tags">
+          ${s.tags.map(t => `<span class="tag-pill">${t}</span>`).join('')}
+        </div>
+
+        <section class="section">
+          <div class="section-label">Description</div>
+          <p class="section-body">${s.description}</p>
+        </section>
+
+        <section class="section">
+          <div class="section-label">Ce que j'en pense</div>
+          <blockquote class="opinion-block">${s.opinion}</blockquote>
+        </section>
+
+        ${s.refs && s.refs.length ? `
+        <section class="section">
+          <div class="section-label">Références</div>
+          <ul class="ref-list">
+            ${s.refs.map(r => `<li><a href="${r.url}" target="_blank" rel="noopener">${r.label}</a></li>`).join('')}
+          </ul>
+        </section>` : ''}
+
+        ${related.length ? `
+        <hr class="section-divider">
+        <section class="section">
+          <div class="section-label">Sujets similaires</div>
+          <div class="related-grid">
+            ${related.map(r => `
+              <div class="related-item" onclick="showDetail(${r.id})">
+                <span>${r.title}</span>
+                <span>›</span>
+              </div>`).join('')}
+          </div>
+        </section>` : ''}
+      `;
+
+      document.getElementById('listView').style.display = 'none';
+      const detail = document.getElementById('detailView');
+      detail.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── Back to list ──
+    function showList() {
+      document.getElementById('listView').style.display = '';
+      document.getElementById('detailView').classList.remove('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    loadSubjects();
+  </script>
+</body>
+</html>
